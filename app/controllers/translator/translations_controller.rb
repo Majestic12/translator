@@ -1,6 +1,8 @@
 module Translator
   class TranslationsController < ApplicationController
-    before_filter :auth
+    skip_before_filter :authenticate_user!
+    skip_before_filter :verify_authenticity_token
+    skip_authorization_check
 
     def index
       section = params[:key].present? && params[:key] + '.'
@@ -8,6 +10,7 @@ module Translator
       @sections = Translator.keys_for_strings(:group => params[:group]).map {|k| k = k.scan(/^[a-zA-Z0-9\-_]*\./)[0]; k ? k.gsub('.', '') : false}.select{|k| k}.uniq.sort
       @groups = ["framework", "application", "deleted"]
       @keys = Translator.keys_for_strings(:group => params[:group], :filter => section)
+
       if params[:search]
         @keys = @keys.select {|k|
           Translator.locales.any? {|locale| I18n.translate("#{k}", :locale => locale).to_s.downcase.include?(params[:search].downcase)}
@@ -26,31 +29,44 @@ module Translator
         }
       end
 
-
       @keys = paginate(@keys)
-
       render :layout => Translator.layout_name
     end
 
     def create
-      Translator.current_store[params[:key]] = params[:value]
-      redirect_to :back unless request.xhr?
+      begin
+        nests = params[:key].split(/\./)
+        nest_value = params[:value]
+        yaml_file = nil
+        # check first line of hash for locale
+        # ensure initializer in main app has correct file path for yaml
+        if Translator.locales_path_hash.has_key?(nests[0])
+          yaml_file = Translator.path_to_locale(nests[0])
+        else
+          raise 'ERROR - Locale not editable'
+        end
+
+        nests_reversed = nests.reverse
+        ready_hash = Translator.nest_hash_from_array(nests_reversed, nest_value)
+        data = YAML.load_file yaml_file
+        Translator.deep_merge(data, ready_hash)
+
+        File.open(yaml_file, 'w+') do |file|
+          data_yaml = data.ya2yaml
+          file.puts data_yaml
+        end
+      rescue
+        puts 'ERROR - Failed to update yaml file'
+      end
+      redirect_to :back
     end
 
+    # does nothing
     def destroy
-      key = params[:id].gsub('-','.')
-      Translator.locales.each do |locale|
-        Translator.current_store.destroy_entry(locale.to_s + '.' + key)
-      end
       redirect_to :back unless request.xhr?
     end
 
     private
-
-    def auth
-      Translator.auth_handler.bind(self).call if Translator.auth_handler.is_a? Proc
-    end
-
     def paginate(collection)
       @page = params[:page].to_i
       @page = 1 if @page == 0
@@ -59,4 +75,3 @@ module Translator
     end
   end
 end
-
