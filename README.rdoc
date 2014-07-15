@@ -52,11 +52,8 @@ the example that you could use with Spree:
 = Thanks
 
 Hubert Łępicki for https://github.com/amberbit/translator.
+Copyright and License
+Copyright by Hubert Łępicki, 2010-2011. Find me at hubert.lepicki@amberbit.com.
+This software is licensed under the terms of MIT-LICENSE.
 
 David Heinemeier Hansson for https://github.com/dhh/tolk, Ryan Bates for I18n::Backend screencast http://railscasts.com/episodes/256-i18n-backends.
-
-= Copyright and License
-
-Copyright by Hubert Łępicki, 2010-2011. Find me at hubert.lepicki@amberbit.com.
-
-This software is licensed under the terms of MIT-LICENSE.

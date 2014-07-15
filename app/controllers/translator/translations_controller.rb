@@ -8,7 +8,7 @@ module Translator
       section = params[:key].present? && params[:key] + '.'
       params[:group] = "all" unless params["group"]
       @sections = Translator.keys_for_strings(:group => params[:group]).map {|k| k = k.scan(/^[a-zA-Z0-9\-_]*\./)[0]; k ? k.gsub('.', '') : false}.select{|k| k}.uniq.sort
-      @groups = ["framework", "application", "deleted"]
+      @groups = ["framework", "application"]
       @keys = Translator.keys_for_strings(:group => params[:group], :filter => section)
 
       if params[:search]
@@ -59,11 +59,6 @@ module Translator
         puts 'ERROR - Failed to update yaml file'
       end
       redirect_to :back
-    end
-
-    # does nothing
-    def destroy
-      redirect_to :back unless request.xhr?
     end
 
     private

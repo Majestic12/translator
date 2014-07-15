@@ -11,11 +11,6 @@
       <%= submit_tag "Submit" %>
     <% end %>
   </div>
-  <% if params[:group] && params[:group] == 'deleted' %>
-    <div>
-      You can delete those translations from database as application doesn't use them anymore.
-    </div>
-  <% end %>
 
   <% @keys.each do |key| %>
     <div id="<%= key.gsub('.','-')  %>" class="translation">
@@ -31,15 +26,6 @@
         <%= parts.join(' > ').html_safe %>
       </h2>
 
-      <% if params[:group] && params[:group] == 'deleted' %>
-        <%= link_to 'destroy', translation_path(:id => key.gsub('.','-')),
-                      :remote => true,
-                      :method => :delete,
-                      :confirm => 'Are you sure? This operation is irreversible.',
-                      :class => 'button warning',
-                      :title => 'Clear form database as translation no longer exists in default language file.'
-        %>
-      <% end %>
       <% Translator.locales.each do |locale| %>
         <%= render :partial => "form", :locals => {:locale => locale, :key => key} %>
       <% end %>
@@ -63,7 +49,6 @@
     <br/>
     2010-2011 &copy; Hubert Łępicki &lt;hubert.lepicki@amberbit.com&gt;
   </div>
-  <%= link_to image_tag("http://amberbit.com/images/logo.png"), "http://amberbit.com" %>
 </div>
 
 <script type="text/javascript">
@@ -72,4 +57,3 @@
     $("input[type='text']", $(this).parents("form")).val($(this).attr("data-recover"));
   });
 </script>
-
