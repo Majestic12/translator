@@ -46,19 +46,33 @@ module Translator
           raise 'ERROR - Locale not editable'
         end
 
+        # in case writing failed
+        backup_data = YAML.load_file yaml_file
+
         nests_reversed = nests.reverse
         ready_hash = Translator.nest_hash_from_array(nests_reversed, nest_value)
         data = YAML.load_file yaml_file
         Translator.deep_merge(data, ready_hash)
 
-        File.open(yaml_file, 'w+') do |file|
+        File.open(yaml_file, 'w') do |file|
           data_yaml = data.ya2yaml
           file.puts data_yaml
         end
-      rescue
-        puts 'ERROR - Failed to update yaml file'
+        @success = "true";
+      rescue => e
+        puts '**************************************************'
+        puts 'Failed to update yaml file - ERROR:'
+        puts e
+        puts ''
+        puts 'Reverting changes...'
+        puts '**************************************************'
+
+        File.open(yaml_file, 'w') do |file|
+          data_yaml = backup_data.ya2yaml
+          file.puts data_yaml
+        end
+        @success = "false";
       end
-      redirect_to :back
     end
 
     private

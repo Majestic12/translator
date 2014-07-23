@@ -1,2 +1,8 @@
 <% locale, key = params[:key].split(".")[0].to_sym, params[:key].sub(/^[a-z0-9\-_]*\./i, '') %>
-$("#<%= params[:key].gsub('.', '-') %>").replaceWith('<%= escape_javascript render(:partial => "form", :locals => {:key => key, :locale => locale}) %>');
+if(<%= @success == "true"%>)
+{
+  $("#<%= params[:key].gsub('.', '-') %>").replaceWith('<%= escape_javascript render(:partial => "form", :locals => {:key => key, :locale => locale, :save_status => "[updated]"}) %>');
+} else
+{
+  $("#<%= params[:key].gsub('.', '-') %>").replaceWith('<%= escape_javascript render(:partial => "form", :locals => {:key => key, :locale => locale, :save_status => "[failed]"}) %>');
+}

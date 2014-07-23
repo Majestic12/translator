@@ -27,7 +27,7 @@
       </h2>
 
       <% Translator.locales.each do |locale| %>
-        <%= render :partial => "form", :locals => {:locale => locale, :key => key} %>
+        <%= render :partial => "form", :locals => {:locale => locale, :key => key, :save_status => "[]"} %>
       <% end %>
     </div>
   <% end %>

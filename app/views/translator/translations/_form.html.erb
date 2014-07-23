@@ -3,7 +3,6 @@
 
   <span class='locale'><%= locale %>: </span><%= text_area_tag :value, val = (begin I18n.backend.translate locale, key; rescue; end) %>
   <%= submit_tag "Save", "data-disable-with" => "Saving...", :class => 'button' %>
-  <% if (default_val = (begin Translator.simple_backend.translate locale, key; rescue; end;)) != val %>
-    <%= link_to "Default", '#', "data-recover" => default_val || "", :class => "button" %>
-  <% end %>
+  <% locale_key_status = "#{locale}.#{key}".gsub('.', '-') + "_status" %>
+  <div id=locale_key_status style="display: inline"><%= "#{save_status}" %></div>
 <% end %>
