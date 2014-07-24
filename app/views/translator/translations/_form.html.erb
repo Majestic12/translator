@@ -1,7 +1,7 @@
 <%= form_tag translations_path, :id => "#{locale}.#{key}".gsub('.', '-'), :class => "translate", "data-remote" => true, :method => "post" do %>
   <%= hidden_field_tag :key, "#{locale}.#{key}" %>
-
-  <span class='locale'><%= locale %>: </span><%= text_area_tag :value, val = (begin I18n.backend.translate locale, key; rescue; end) %>
+  <% key_value_present = (begin I18n.backend.translate locale, key; rescue; end) %>
+  <span class='locale'><%= locale %>: </span><%= text_area_tag :value, val = key_value_present ? key_value_present : saved_value %>
   <%= submit_tag "Save", "data-disable-with" => "Saving...", :class => 'button' %>
   <% locale_key_status = "#{locale}.#{key}".gsub('.', '-') + "_status" %>
   <div id=locale_key_status style="display: inline"><%= "#{save_status}" %></div>

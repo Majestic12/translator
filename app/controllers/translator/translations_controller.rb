@@ -34,6 +34,7 @@ module Translator
     end
 
     def create
+      @key_value = params[:value].to_s
       begin
         nests = params[:key].split(/\./)
         nest_value = params[:value]
@@ -58,7 +59,7 @@ module Translator
           data_yaml = data.ya2yaml
           file.puts data_yaml
         end
-        @success = "true";
+        @success = "[updated]";
       rescue => e
         puts '**************************************************'
         puts 'Failed to update yaml file - ERROR:'
@@ -71,7 +72,7 @@ module Translator
           data_yaml = backup_data.ya2yaml
           file.puts data_yaml
         end
-        @success = "false";
+        @success = "[failed]";
       end
     end
 
